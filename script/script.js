@@ -1,11 +1,12 @@
 function validateForm() {
-    var name = document.getElementById('name').value;
-    var prenom = document.getElementById('prenom').value;
-    var email = document.getElementById('email').value;
-    var telephone = document.getElementById('telephone').value;
-    var message = document.getElementById('message').value;
+    var pseudo = document.getElementById('pseudo').value.trim();
+    var nom = document.getElementById('nom').value.trim();
+    var prenom = document.getElementById('prenom').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var telephone = document.getElementById('telephone').value.trim();
+    var mot_de_passe = document.getElementById('mot_de_passe').value.trim();
 
-    if (name == "" || prenom == "" || email == "" || telephone == "" || message == "") {
+    if (pseudo === "" || nom === "" || prenom === "" || email === "" || telephone === "" || mot_de_passe === "") {
         alert("Tous les champs doivent être remplis");
         return false;
     }
@@ -24,7 +25,6 @@ function validateForm() {
 
     return true;
 }
-
 function validateForm() {
     var form = document.getElementById('announceForm');
     var inputs = form.querySelectorAll('input[required], textarea[required]');

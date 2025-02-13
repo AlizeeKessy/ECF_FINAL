@@ -1,11 +1,8 @@
-
 <?php 
 include 'includes/header.php';
 ?>
 
-
 <?php
-
 // Vérification si l'utilisateur est déjà connecté
 if (isset($_SESSION['user_id'])) {
     echo '<meta http-equiv="refresh" content="0;url=index.php">'; // Redirection vers la page d'accueil si l'utilisateur est déjà connecté
@@ -18,12 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $login = htmlspecialchars(trim($_POST['login']));
     $password = htmlentities(trim($_POST['password']));
 
-    $stmt = $pdo->prepare("SELECT * FROM waz_utilisateurs WHERE email=:email;");
+    $stmt = $pdo->prepare("SELECT * FROM waz_utilisateurs WHERE utilisateur_email=:email;");
     $stmt->bindValue(':email', $login);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && password_verify($password, $user['mot_de_passe'])) {
+    if ($user && password_verify($password, $user['utilisateur_mdp'])) {
         // Connexion réussie, stockage de l'identifiant de l'utilisateur dans la variable de session
         $_SESSION['user_id'] = $user['utilisateur_id'];
 
@@ -41,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error_message = "Email ou mot de passe incorrect.";
     }
 }
+
 ?>
 
 <main>
@@ -54,7 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if (isset($error_message)) : ?>
         <p><?php echo htmlspecialchars($error_message, ENT_QUOTES, 'UTF-8'); ?></p>
     <?php endif; ?>
-    <form id="mSForms" method="post" class="msForms">
+    <div class="container mt-4">
+      <form id="mSForms" method="post" class="msForms">
         <h5>Connectez-vous pour accéder à votre compte</h5>
         <p>Pas de compte ? <a href="inscription.php">S'inscrire</a></p>
         <div>
@@ -69,7 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="submit" name="connexion" value="Connexion" class="btn btn-secondary">
         </div>
         <a href="#">Mot de passe oublié ?</a>
-    </form>
+    </form>  
+    </div>
 </main>
 
 <?php include 'includes/footer.php'; ?>

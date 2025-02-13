@@ -1,8 +1,5 @@
-<?php 
-include 'includes/header.php';
-?>
-
-   <main>
+<?php include 'includes/header.php';?>
+<main>
      <div class="container mt-4">
         <h1>Bienvenue sur notre site d'agence immobilière</h1>
         <p>Découvrez notre sélection de biens à vendre.</p>
@@ -14,7 +11,7 @@ include 'includes/header.php';
                     <div class="card-body">
                         <h5 class="card-title">Titre du bien</h5>
                         <p class="card-text">Description courte du bien immobilier.</p>
-                        <a href="#" class="btn btn-primary">Voir plus</a>
+                        <a href="announce.php" class="btn btn-primary">Voir plus</a>
                     </div>
                 </div>
             </div>
@@ -22,6 +19,4 @@ include 'includes/header.php';
         </div>
     </div>
 </main>
-
-   
-    <?php include 'includes/footer.php'; ?>
+<?php include 'includes/footer.php'; ?>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mer. 12 fév. 2025 à 16:48
+-- Généré le : jeu. 13 fév. 2025 à 16:37
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -63,13 +63,15 @@ CREATE TABLE `waz_annonces` (
 -- Déclencheurs `waz_annonces`
 --
 DELIMITER $$
-CREATE TRIGGER `tri_ann_ref` BEFORE INSERT ON `waz_annonces` FOR EACH ROW BEGIN
+CREATE TRIGGER `before_insert_waz_annonces` BEFORE INSERT ON `waz_annonces` FOR EACH ROW BEGIN
     DECLARE prefix CHAR(3) DEFAULT 'REF';
     DECLARE num INT;
 
+    -- Compter le nombre d'annonces existantes
     SELECT COUNT(*) INTO num FROM waz_annonces;
     SET num = num + 1;
 
+    -- Générer la référence de l'annonce
     SET NEW.ann_ref = CONCAT(prefix, LPAD(num, 7, '0'));
 END
 $$
@@ -85,6 +87,25 @@ CREATE TABLE `waz_options` (
   `option_id` int(11) NOT NULL,
   `option_libelle` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `waz_options`
+--
+
+INSERT INTO `waz_options` (`option_id`, `option_libelle`) VALUES
+(1, 'Jardin'),
+(2, 'Garage'),
+(3, 'Parking'),
+(4, 'Piscine'),
+(5, 'Combles aménageables'),
+(6, 'Cuisine ouverte'),
+(7, 'Sans travaux'),
+(8, 'Avec travaux'),
+(9, 'Cave'),
+(10, 'Plain-pied'),
+(11, 'Ascenseur'),
+(12, 'Terrasse/balcon'),
+(13, 'Cheminée');
 
 -- --------------------------------------------------------
 
@@ -116,7 +137,7 @@ CREATE TABLE `waz_types_utilisateurs` (
 
 INSERT INTO `waz_types_utilisateurs` (`type_utilisateur_id`, `type_utilisateur_libelle`) VALUES
 (1, 'Admin'),
-(2, 'Visiteur');
+(2, 'Commercial');
 
 -- --------------------------------------------------------
 
@@ -134,19 +155,14 @@ CREATE TABLE `waz_type_bien` (
 --
 
 INSERT INTO `waz_type_bien` (`type_bien_id`, `type_bien_libelle`) VALUES
-(1, 'Jardin'),
-(2, 'Garage'),
-(3, 'Parking'),
-(4, 'Piscine'),
-(5, 'Combles aménageables'),
-(6, 'Cuisine ouverte'),
-(7, 'Sans travaux'),
-(8, 'Avec travaux'),
-(9, 'Cave'),
-(10, 'Plain-pied'),
-(11, 'Ascenseur'),
-(12, 'Terrasse/balcon'),
-(13, 'Cheminée');
+(1, 'Maison'),
+(2, 'Appartement'),
+(3, 'Immeuble'),
+(4, 'Commerce'),
+(5, 'Garage'),
+(6, 'Parking'),
+(7, 'Terrain'),
+(8, 'Lotissement');
 
 -- --------------------------------------------------------
 
@@ -177,6 +193,8 @@ INSERT INTO `waz_type_offre` (`type_offre_id`, `type_offre_libelle`) VALUES
 CREATE TABLE `waz_utilisateurs` (
   `utilisateur_id` int(11) NOT NULL,
   `utilisateur_pseudo` varchar(50) NOT NULL,
+  `utilisateur_nom` varchar(50) NOT NULL,
+  `utilisateur_prenom` varchar(50) NOT NULL,
   `utilisateur_email` varchar(50) NOT NULL,
   `utilisateur_mdp` varchar(255) NOT NULL,
   `type_utilisateur_id` int(11) NOT NULL
@@ -186,8 +204,11 @@ CREATE TABLE `waz_utilisateurs` (
 -- Déchargement des données de la table `waz_utilisateurs`
 --
 
-INSERT INTO `waz_utilisateurs` (`utilisateur_id`, `utilisateur_pseudo`, `utilisateur_email`, `utilisateur_mdp`, `type_utilisateur_id`) VALUES
-(1, 'Molly_Mohana', 'mollymohana@gmail.com', '04072018', 1);
+INSERT INTO `waz_utilisateurs` (`utilisateur_id`, `utilisateur_pseudo`, `utilisateur_nom`, `utilisateur_prenom`, `utilisateur_email`, `utilisateur_mdp`, `type_utilisateur_id`) VALUES
+(1, 'Jordev', 'GALLO', 'Baidy', 'jordev@gmail.com', '$2y$10$hHiqn33c/x28l2Zz5M/zrORDW62JT6OWz1fPXukWSgkN8c.BK8UCW', 1),
+(3, 'Molly_Mohana', 'AKABI NANGA', 'Molly Mohana', 'mollymohana@gmail.com', '$2y$10$NSASKdd8zgYUHvPoz6IRBOdd4swg1MRdvZ7hbInkvf08JTizPJRUi', 2),
+(4, 'Phoenix149', 'CARRAUD', 'Anthony', 'phoenix149@gmail.com', '$2y$10$XPPxlu8yHU3ZEFxWmDeeU.IEDXXp0Wp0ssMO/WGLw4GC9AUkFvuFO', 2),
+(5, 'Alize_Kessy', 'AKABI NANGA', 'Alizee Kessy', 'alizeekessy@gmail.com', '$2y$10$qLeuITxkdKWYiUJoLAGXfeHtS0L27rGK5Aj9Oyowxi70kBP/C3pyy', 2);
 
 --
 -- Index pour les tables déchargées
@@ -206,6 +227,7 @@ ALTER TABLE `avoir`
 ALTER TABLE `waz_annonces`
   ADD PRIMARY KEY (`ann_id`),
   ADD UNIQUE KEY `ann_vue` (`ann_vue`),
+  ADD UNIQUE KEY `ann_vue_2` (`ann_vue`),
   ADD KEY `type_offre_id` (`type_offre_id`),
   ADD KEY `type_bien_id` (`type_bien_id`),
   ADD KEY `utilisateur_id` (`utilisateur_id`);
@@ -247,6 +269,34 @@ ALTER TABLE `waz_type_offre`
 ALTER TABLE `waz_utilisateurs`
   ADD PRIMARY KEY (`utilisateur_id`),
   ADD KEY `type_utilisateur_id` (`type_utilisateur_id`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `waz_annonces`
+--
+ALTER TABLE `waz_annonces`
+  MODIFY `ann_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT pour la table `waz_photos`
+--
+ALTER TABLE `waz_photos`
+  MODIFY `photo_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `waz_type_bien`
+--
+ALTER TABLE `waz_type_bien`
+  MODIFY `type_bien_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT pour la table `waz_utilisateurs`
+--
+ALTER TABLE `waz_utilisateurs`
+  MODIFY `utilisateur_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Contraintes pour les tables déchargées
