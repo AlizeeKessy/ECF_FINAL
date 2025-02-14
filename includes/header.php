@@ -1,6 +1,8 @@
 <?php
-session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
+session_start();
 // Connexion à la base de données
 $host = "127.0.0.1";
 $dbname = "afpa_wazaa_immo";
@@ -10,7 +12,7 @@ $password = "";
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "✅ Connexion réussie à la base de données !";
+    //  echo "✅ Connexion réussie à la base de données !";
 } catch (PDOException $e) {
     die("❌ Erreur de connexion : " . $e->getMessage());
 }
@@ -60,7 +62,7 @@ $isAdmin = isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'Admin';
                             <a class="nav-link" href="contact.php">Contact</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="about.php">À propos</a>
+                            <a class="nav-link" href="a_propos.php">À propos</a>
                         </li>
                     </ul>
                     <form class="d-flex" role="search">

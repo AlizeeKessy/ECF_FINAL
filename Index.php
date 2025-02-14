@@ -1,4 +1,8 @@
-<?php include 'includes/header.php';?>
+<?php 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+include 'includes/header.php'
+?>
 <main>
      <div class="container mt-4">
         <h1>Bienvenue sur notre site d'agence immobilière</h1>
@@ -11,7 +15,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Titre du bien</h5>
                         <p class="card-text">Description courte du bien immobilier.</p>
-                        <a href="announce.php" class="btn btn-primary">Voir plus</a>
+                        <a href="announce.php?ann_id=55" class="btn btn-primary">Voir plus</a>
                     </div>
                 </div>
             </div>

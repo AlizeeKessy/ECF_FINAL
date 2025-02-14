@@ -1,44 +1,43 @@
 <?php include 'includes/header.php'; ?>
 <?php
 // Récupérer les valeurs de type_offre_libelle
-$stmt = $pdo->prepare("SELECT type_offre_libelle FROM waz_type_offre");
+$stmt = $pdo->prepare("SELECT type_offre_id, type_offre_libelle FROM waz_type_offre");
 $stmt->execute();
 $type_offres = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Récupérer les valeurs de type_bien_libelle
-$stmt = $pdo->prepare("SELECT type_bien_libelle FROM waz_type_bien");
+$stmt = $pdo->prepare("SELECT type_bien_id, type_bien_libelle FROM waz_type_bien");
 $stmt->execute();
 $type_biens = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Récupérer les valeurs de option_libelle
-$stmt = $pdo->prepare("SELECT option_libelle FROM waz_options");
+$stmt = $pdo->prepare("SELECT option_id, option_libelle FROM waz_options");
 $stmt->execute();
 $options = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Récupérer les valeurs de diag_energie_libelle
-$stmt = $pdo->prepare("SELECT diag_energie_libelle FROM waz_diag_energie");
+$stmt = $pdo->prepare("SELECT diag_energie_id, diag_energie_libelle FROM waz_diag_energie");
 $stmt->execute();
 $diag_energies = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Récupérer et sécuriser les données du formulaire
-    $ann_offre = htmlentities($_POST['ann_offre']);
-    $ann_type = htmlentities($_POST['ann_type']);
-    $ann_piece = htmlentities($_POST['ann_piece']);
-    $ann_titre = htmlentities($_POST['ann_titre']);
-    $ann_description = htmlentities($_POST['ann_description']);
-    $ann_localisation = htmlentities($_POST['ann_localisation']);
-    $ann_surf_hab = htmlentities($_POST['ann_surf_hab']);
-    $ann_suf_total = htmlentities($_POST['ann_suf_total']);
-    $ann_vue = htmlentities($_POST['ann_vue']);
-    $ann_diag_energie = $_POST['ann_diag_energie']; // Récupérer les diagnostics énergétiques sélectionnés
-    $ann_prix_bien = htmlentities($_POST['ann_prix_bien']);
-    $ann_date_ajout = htmlentities($_POST['ann_date_ajout']);
-    $ann_date_modif = htmlentities($_POST['ann_date_modif']);
-    $type_offre_libelle = htmlentities($_POST['type_offre_libelle']);
-    $type_bien_libelle = htmlentities($_POST['type_bien_libelle']);
-    $options_libelle = $_POST['options_libelle']; // Récupérer les options sélectionnées
-    $utilisateur_libelle = htmlentities($_POST['utilisateur_libelle']);
+    $ann_offre = isset($_POST['ann_offre']) ? htmlentities($_POST['ann_offre']) : '';
+    $ann_type = isset($_POST['ann_type']) ? htmlentities($_POST['ann_type']) : '';
+    $ann_piece = isset($_POST['ann_piece']) ? htmlentities($_POST['ann_piece']) : '';
+    $ann_titre = isset($_POST['ann_titre']) ? htmlentities($_POST['ann_titre']) : '';
+    $ann_description = isset($_POST['ann_description']) ? htmlentities($_POST['ann_description']) : '';
+    $ann_localisation = isset($_POST['ann_localisation']) ? htmlentities($_POST['ann_localisation']) : '';
+    $ann_surf_hab = isset($_POST['ann_surf_hab']) ? htmlentities($_POST['ann_surf_hab']) : '';
+    $ann_suf_total = isset($_POST['ann_suf_total']) ? htmlentities($_POST['ann_suf_total']) : '';
+    $ann_diag_energie = implode($_POST['ann_diag_energie'] ?? []);
+    $ann_prix_bien = isset($_POST['ann_prix_bien']) ? htmlentities($_POST['ann_prix_bien']) : '';
+    $ann_date_ajout = isset($_POST['ann_date_ajout']) ? htmlentities($_POST['ann_date_ajout']) : '';
+    $ann_date_modif = isset($_POST['ann_date_modif']) ? htmlentities($_POST['ann_date_modif']) : '';
+    $type_offre_libelle = isset($_POST['type_offre_libelle']) ? htmlentities($_POST['type_offre_libelle']) : '';
+    $type_bien_libelle = isset($_POST['type_bien_libelle']) ? htmlentities($_POST['type_bien_libelle']) : '';
+    $options_libelle = isset($_POST['options_libelle']) ? $_POST['options_libelle'] : [];
+    $utilisateur_libelle = isset($_POST['utilisateur_libelle']) ? htmlentities($_POST['utilisateur_libelle']) : '';
 
     // Vérifier que les valeurs de type_offre_libelle, type_bien_libelle et options_libelle existent
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM waz_type_offre WHERE type_offre_libelle = :type_offre_libelle");
@@ -67,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $type_bien_id = $stmt->fetchColumn();
 
     // Insérer l'annonce
-    $stmt = $pdo->prepare("INSERT INTO waz_annonces (ann_offre, ann_type, ann_piece, ann_titre, ann_description, ann_localisation, ann_surf_hab, ann_suf_total, ann_vue, ann_prix_bien, ann_date_ajout, ann_date_modif, type_offre_id, type_bien_id, utilisateur_id) VALUES (:ann_offre, :ann_type, :ann_piece, :ann_titre, :ann_description, :ann_localisation, :ann_surf_hab, :ann_suf_total, :ann_vue, :ann_prix_bien, :ann_date_ajout, :ann_date_modif, :type_offre_id, :type_bien_id, :utilisateur_id)");
+    $stmt = $pdo->prepare("INSERT INTO waz_annonces (ann_offre, ann_type, ann_piece, ann_titre, ann_description, ann_localisation, ann_surf_hab, ann_suf_total, ann_vue, ann_diag_energie, ann_prix_bien, ann_date_ajout, ann_date_modif, type_offre_id, type_bien_id, utilisateur_id) VALUES (:ann_offre, :ann_type, :ann_piece, :ann_titre, :ann_description, :ann_localisation, :ann_surf_hab, :ann_suf_total, 0, :ann_diag_energie, :ann_prix_bien, :ann_date_ajout, :ann_date_modif, :type_offre_id, :type_bien_id, :utilisateur_id)");
     $stmt->bindParam(':ann_offre', $ann_offre);
     $stmt->bindParam(':ann_type', $ann_type);
     $stmt->bindParam(':ann_piece', $ann_piece);
@@ -76,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bindParam(':ann_localisation', $ann_localisation);
     $stmt->bindParam(':ann_surf_hab', $ann_surf_hab);
     $stmt->bindParam(':ann_suf_total', $ann_suf_total);
-    $stmt->bindParam(':ann_vue', $ann_vue);
+    $stmt->bindParam(':ann_diag_energie', $ann_diag_energie);
     $stmt->bindParam(':ann_prix_bien', $ann_prix_bien);
     $stmt->bindParam(':ann_date_ajout', $ann_date_ajout);
     $stmt->bindParam(':ann_date_modif', $ann_date_modif);
@@ -88,29 +87,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $ann_id = $pdo->lastInsertId();
 
         // Insérer les options sélectionnées
-        foreach ($options_libelle as $option_libelle) {
-            $stmt = $pdo->prepare("SELECT option_id FROM waz_options WHERE option_libelle = :option_libelle");
-            $stmt->bindParam(':option_libelle', $option_libelle);
-            $stmt->execute();
-            $option_id = $stmt->fetchColumn();
+        if (is_array($options_libelle)) {
+            foreach ($options_libelle as $option_libelle) {
+                $stmt = $pdo->prepare("SELECT option_id FROM waz_options WHERE option_libelle = :option_libelle");
+                $stmt->bindParam(':option_libelle', $option_libelle);
+                $stmt->execute();
+                $option_id = $stmt->fetchColumn();
 
-            $stmt = $pdo->prepare("INSERT INTO waz_annonces_options (ann_id, option_id) VALUES (:ann_id, :option_id)");
-            $stmt->bindParam(':ann_id', $ann_id);
-            $stmt->bindParam(':option_id', $option_id);
-            $stmt->execute();
+                $stmt = $pdo->prepare("INSERT INTO avoir (ann_id, option_id) VALUES (:ann_id, :option_id)");
+                $stmt->bindParam(':ann_id', $ann_id);
+                $stmt->bindParam(':option_id', $option_id);
+                $stmt->execute();
+            }
         }
 
         // Insérer les diagnostics énergétiques sélectionnés
-        foreach ($ann_diag_energie as $diag_energie_libelle) {
-            $stmt = $pdo->prepare("SELECT diag_energie_id FROM waz_diag_energie WHERE diag_energie_libelle = :diag_energie_libelle");
-            $stmt->bindParam(':diag_energie_libelle', $diag_energie_libelle);
-            $stmt->execute();
-            $diag_energie_id = $stmt->fetchColumn();
+        if (is_array($ann_diag_energie)) {
+            foreach ($ann_diag_energie as $diag_energie_libelle) {
+                $stmt = $pdo->prepare("SELECT diag_energie_id FROM waz_diag_energie WHERE diag_energie_libelle = :diag_energie_libelle");
+                $stmt->bindParam(':diag_energie_libelle', $diag_energie_libelle);
+                $stmt->execute();
+                $diag_energie_id = $stmt->fetchColumn();
 
-            $stmt = $pdo->prepare("INSERT INTO waz_annonces_diag_energie (ann_id, diag_energie_id) VALUES (:ann_id, :diag_energie_id)");
-            $stmt->bindParam(':ann_id', $ann_id);
-            $stmt->bindParam(':diag_energie_id', $diag_energie_id);
-            $stmt->execute();
+                $stmt = $pdo->prepare("INSERT INTO waz_annonces_diag_energie (ann_id, diag_energie_id) VALUES (:ann_id, :diag_energie_id)");
+                $stmt->bindParam(':ann_id', $ann_id);
+                $stmt->bindParam(':diag_energie_id', $diag_energie_id);
+                $stmt->execute();
+            }
         }
 
         // Gérer le téléchargement des photos
@@ -126,15 +129,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 if (move_uploaded_file($tmpName, $uploadFile)) {
                     // Insérer le chemin de la photo dans la base de données
-                    $stmt = $pdo->prepare("INSERT INTO waz_photos (ann_id, photo_path) VALUES (:ann_id, :photo_path)");
-                    $stmt->bindParam(':ann_id', $ann_id);
+                    $stmt = $pdo->prepare("INSERT INTO waz_photos (photo_type_bien, ann_id) VALUES (:photo_path, :ann_id)");
                     $stmt->bindParam(':photo_path', $uploadFile);
+                    $stmt->bindParam(':ann_id', $ann_id);
                     $stmt->execute();
                 }
             }
         }
 
         echo "L'annonce a été créée avec succès.";
+        echo '<meta http-equiv="refresh" content="0;url=index.php">'; // Redirection vers la page d'accueil
     } else {
         echo "Une erreur est survenue lors de l'enregistrement de l'annonce. Veuillez réessayer plus tard.";
     }
@@ -174,27 +178,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <div class="mb-3">
                 <label for="ann_titre" class="form-label">Titre</label>
-                <input type="text" class="form-control" id="ann_titre" name="ann_titre" required>
+                <input type="text" class="form-control"placeholder="Ex: Maison en plein centre ville" id="ann_titre" name="ann_titre" required>
             </div>
             <div class="mb-3">
                 <label for="ann_description" class="form-label">Description</label>
-                <textarea class="form-control" id="ann_description" name="ann_description" rows="4" required></textarea>
+                <textarea class="form-control" placeholder="Ex: Descrition du bien, " id="ann_description" name="ann_description" rows="4" required></textarea>
             </div>
             <div class="mb-3">
                 <label for="ann_localisation" class="form-label">Localisation</label>
-                <input type="text" class="form-control" id="ann_localisation" name="ann_localisation" required>
+                <input type="text" class="form-control" placeholder="Ex: Rouen(76)" id="ann_localisation" name="ann_localisation" required>
             </div>
             <div class="mb-3">
                 <label for="ann_surf_hab" class="form-label">Surface habitable (m²)</label>
-                <input type="number" class="form-control" id="ann_surf_hab" name="ann_surf_hab" required>
+                <input type="number" class="form-control" placeholder="Ex: 120m²" id="ann_surf_hab" name="ann_surf_hab" required>
             </div>
             <div class="mb-3">
                 <label for="ann_suf_total" class="form-label">Surface totale (m²)</label>
-                <input type="number" class="form-control" id="ann_suf_total" name="ann_suf_total" required>
+                <input type="number" class="form-control"placeholder="Ex: 400m²"  id="ann_suf_total" name="ann_suf_total" required>
             </div>
             <div class="mb-3">
                 <label for="ann_vue" class="form-label">Vue</label>
-                <input type="number" class="form-control" id="ann_vue" name="ann_vue" required>
+                <input type="number" class="form-control" placeholder="Entrer un nombre"  id="ann_vue" name="ann_vue" required>
             </div>
             <div class="mb-3">
                 <label for="ann_diag_energie" class="form-label">Diagnostic énergétique</label>
@@ -209,7 +213,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <div class="mb-3">
                 <label for="ann_prix_bien" class="form-label">Prix</label>
-                <input type="number" class="form-control" id="ann_prix_bien" name="ann_prix_bien" required>
+                <input type="number" class="form-control" placeholder="Ex: 250.000€" id="ann_prix_bien" name="ann_prix_bien" required>
             </div>
             <div class="mb-3">
                 <label for="ann_date_ajout" class="form-label">Date d'ajout</label>
