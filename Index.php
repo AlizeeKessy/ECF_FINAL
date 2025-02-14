@@ -11,7 +11,7 @@ include 'includes/header.php'
             <!-- Exemple de carte de bien immobilier -->
             <div class="col-md-4">
                 <div class="card mb-4">
-                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="Image du bien">
+                    <img src="photos/annonce_1/1-1.jpg" class="card-img-top" alt="Image du bien">
                     <div class="card-body">
                         <h5 class="card-title">Titre du bien</h5>
                         <p class="card-text">Description courte du bien immobilier.</p>
